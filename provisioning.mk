@@ -1,9 +1,6 @@
 module ?= 'shell'
 docker_registry_ssh ?= 'user@server'
 
-test:
-	echo '${docker_registry_ssh}'
-
 run:
 	@echo -ne "\n\033[0;33m===> $$ "
 	@echo ${cmd}
