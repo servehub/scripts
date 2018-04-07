@@ -14,7 +14,7 @@ run:
 		-e AWS_ACCESS_KEY_ID=$$${project_name_upper}_AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY=$$${project_name_upper}_AWS_SECRET_ACCESS_KEY \
 		${args} \
-		servehub/provisioning-tools:1.0 \
+		servehub/provisioning-tools:latest \
 			/bin/bash -c "${cmd}" \
 
 terraform-init:

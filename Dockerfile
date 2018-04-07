@@ -15,7 +15,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu xenial main" | tee
 RUN pip install --upgrade pip \
     && pip install boto passlib awscli
 
-ENV TERRAFORM_VERSION 0.11.5
+ENV TERRAFORM_VERSION 0.11.6
 
 RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
     && unzip -oq terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin \
