@@ -1,5 +1,7 @@
 module ?= 'shell'
 docker_registry_ssh ?= 'user@server'
+project_name ?= project
+project_name_upper ?= $(shell echo "${project_name}" | tr a-z A-Z)
 
 run:
 	@echo -ne "\n\033[0;33m===> $$ "
@@ -9,8 +11,8 @@ run:
 	docker run --rm -ti \
 		-v ${PWD}:/src \
 		-w /src/${wd} \
-		-e AWS_ACCESS_KEY_ID \
-		-e AWS_SECRET_ACCESS_KEY \
+		-e AWS_ACCESS_KEY_ID=$$${project_name_upper}_AWS_ACCESS_KEY_ID \
+		-e AWS_SECRET_ACCESS_KEY=$$${project_name_upper}_AWS_SECRET_ACCESS_KEY \
 		${args} \
 		servehub/provisioning-tools:1.0 \
 			/bin/bash -c "${cmd}" \
