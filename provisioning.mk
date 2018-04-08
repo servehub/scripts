@@ -41,12 +41,6 @@ ansible-live:
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=live,tag:role=*common*" ${args}' \
 		cmd="ansible-playbook -vv playbook.yml --vault-id ../.secrets/vault-password --private-key=../.secrets/terraform_rsa ${cmd}"
 
-ansible-vpn:
-	@make run \
-		wd=ansible \
-		args='-e ANSIBLE_INVENTORY_FILTERS="tag:role=openvpn-server"' \
-		cmd="ansible-playbook -vv openvpn.yml --vault-id ../.secrets/vault-password --private-key=../.secrets/terraform_rsa ${cmd}"
-
 ansible-encrypt:
 	@make run cmd="ansible-vault encrypt_string --vault-id .secrets/vault-password '${value}' --name='${name}'"
 
