@@ -2,6 +2,7 @@ module ?= 'shell'
 docker_registry_ssh ?= 'user@server'
 project_name ?= project
 project_name_upper ?= $(shell echo "${project_name}" | tr a-z A-Z)
+aws_region ?= 'eu-west-1'
 
 run:
 	@echo -ne "\n\033[0;33m===> $$ "
@@ -27,7 +28,7 @@ terraform-apply:
 	@make run wd=terraform cmd="terraform apply"
 
 tag-spot-instances:
-	@make run cmd="python scripts/tag-spots.py --region eu-central-1"
+	@make run cmd="python scripts/tag-spots.py --region ${aws_region}"
 
 ansible-qa:
 	@make run \
