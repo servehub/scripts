@@ -14,6 +14,7 @@ run:
 		-w /src/${wd} \
 		-e AWS_ACCESS_KEY_ID=$$${project_name_upper}_AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY=$$${project_name_upper}_AWS_SECRET_ACCESS_KEY \
+		-e AWS_DEFAULT_REGION=${aws_region} \
 		${args} \
 		servehub/provisioning-tools:latest \
 			/bin/bash -c "${cmd}" \
@@ -50,6 +51,9 @@ ansible-shell:
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="${filter}"' \
 		cmd="ansible -m ${module} -a '${cmd}' -i inventory/ec2.py --vault-id ../.secrets/vault-password --private-key=../.secrets/terraform_rsa all"
+
+awscli:
+	@make run cmd="~/.local/bin/aws ${cmd}"
 
 create-user:
 	$(eval sha512 = `python -c "import passlib.hash; print passlib.hash.sha512_crypt.using(rounds=5000).hash('${pass}')"`)
