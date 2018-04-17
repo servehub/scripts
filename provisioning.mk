@@ -75,3 +75,7 @@ cleanup-docker-registry:
 
 	ssh ${docker_registry_ssh} \
 		'docker exec compose_docker-registry_1 bin/registry garbage-collect /etc/docker/registry/config.yml'
+
+use-serve-configs:
+	ln -sf ${PWD}/ansible/files/serve/conf.d /etc/serve
+	ln -sf ${PWD}/ansible/files/serve/include.d /etc/serve
