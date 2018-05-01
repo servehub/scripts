@@ -4,6 +4,9 @@ project_name ?= project
 project_name_upper ?= $(shell echo "${project_name}" | tr a-z A-Z)
 aws_region ?= 'eu-west-1'
 
+ansible_qa_args ?= ''
+ansible_live_args ?= ''
+
 run:
 	@echo -ne "\n\033[0;33m===> $$ "
 	@echo ${cmd}
@@ -35,13 +38,13 @@ ansible-qa:
 	@make run \
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=qa,tag:role=*common*" ${args}' \
-		cmd="ansible-playbook -vv playbook.yml --vault-id ../.secrets/vault-password --private-key=../.secrets/terraform_rsa ${cmd}"
+		cmd="ansible-playbook -vv playbook.yml ${ansible_qa_args} ${cmd}"
 
 ansible-live:
 	@make run \
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=live,tag:role=*common*" ${args}' \
-		cmd="ansible-playbook -vv playbook.yml --vault-id ../.secrets/vault-password --private-key=../.secrets/terraform_rsa ${cmd}"
+		cmd="ansible-playbook -vv playbook.yml ${ansible_live_args} ${cmd}"
 
 ansible-encrypt:
 	@make run cmd="ansible-vault encrypt_string --vault-id .secrets/vault-password '${value}' --name='${name}'"
@@ -56,9 +59,7 @@ awscli:
 	@make run cmd="~/.local/bin/aws ${cmd}"
 
 create-user:
-	$(eval sha512 = `python -c "import passlib.hash; print passlib.hash.sha512_crypt.using(rounds=5000).hash('${pass}')"`)
-	$(eval sha1 = `python -c "import sha, base64; print base64.b64encode(sha.new('${pass}').digest())"`)
-	@echo '{ user: "'${name}'", sha512: "'${sha512}'", sha1: "'${sha1}'" }'
+	@make run cmd="python scripts/new-user.py --user '${name}'"
 
 gen-self-signed-ssl-keys:
 	docker run --rm -it -v ${PWD}:/home -w /home svagi/openssl req -x509 -nodes -newkey rsa:2048 -keyout ssl.key -out ssl.crt
@@ -79,3 +80,14 @@ cleanup-docker-registry:
 use-serve-configs:
 	ln -sf ${PWD}/ansible/files/serve/conf.d /etc/serve
 	ln -sf ${PWD}/ansible/files/serve/include.d /etc/serve
+
+generate-secrets:
+	ssh-keygen -f ${PWD}/.secrets/ssh_rsa_key
+	ssh-keygen -f ${PWD}/.secrets/vault-password
+	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-dev.key -out ${PWD}/.secrets/marathon-secrets-dev.cer -subj "/CN=PKCS#7"
+	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-prod.key -out ${PWD}/.secrets/marathon-secrets-prod.cer -subj "/CN=PKCS#7"
+
+prepare-new-server:
+	ssh ${ssh} 'echo ${host} | sudo tee /etc/hostname'
+	ssh ${ssh} 'sudo hostname $(cat /etc/hostname)'
+	ssh ${ssh} 'sudo apt-get update && sudo apt-get -y install --fix-missing python-simplejson'
