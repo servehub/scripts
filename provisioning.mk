@@ -3,16 +3,17 @@ docker_registry_ssh ?= 'user@server'
 project_name ?= project
 project_name_upper ?= $(shell echo "${project_name}" | tr a-z A-Z)
 aws_region ?= 'eu-west-1'
+tty_enabled ?= -ti
 
-ansible_qa_args ?= ''
-ansible_live_args ?= ''
+ansible_qa_args ?=
+ansible_live_args ?=
 
 run:
 	@echo -ne "\n\033[0;33m===> $$ "
 	@echo ${cmd}
 	@echo -e "\033[0m"
 
-	docker run --rm -ti \
+	docker run --rm ${tty_enabled} \
 		-v ${PWD}:/src \
 		-w /src/${wd} \
 		-e AWS_ACCESS_KEY_ID=$$${project_name_upper}_AWS_ACCESS_KEY_ID \
