@@ -85,8 +85,8 @@ use-serve-configs:
 generate-secrets:
 	ssh-keygen -f ${PWD}/.secrets/ssh_rsa_key
 	ssh-keygen -f ${PWD}/.secrets/vault-password
-	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-dev.key -out ${PWD}/.secrets/marathon-secrets-dev.cer -subj "/CN=PKCS#7"
-	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-prod.key -out ${PWD}/.secrets/marathon-secrets-prod.cer -subj "/CN=PKCS#7"
+	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-qa.key -out ${PWD}/.secrets/marathon-secrets-qa.cer -subj "/CN=PKCS#7"
+	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-live.key -out ${PWD}/.secrets/marathon-secrets-live.cer -subj "/CN=PKCS#7"
 
 prepare-new-server:
 	ssh ${ssh} 'echo ${host} | sudo tee /etc/hostname'
