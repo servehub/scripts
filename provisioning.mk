@@ -92,3 +92,16 @@ prepare-new-server:
 	ssh ${ssh} 'echo ${host} | sudo tee /etc/hostname'
 	ssh ${ssh} 'sudo hostname $(cat /etc/hostname)'
 	ssh ${ssh} 'sudo apt-get update && sudo apt-get -y install --fix-missing python-simplejson'
+
+encrypt-secret:
+	@echo -ne "\nEnter secret value for encryption: "
+	@read value \
+		&& echo -e "\n" \
+		&& echo -n "$$value" | openssl smime -encrypt -outform pem .secrets/marathon-secrets-${env}.cer | base64
+	@echo ""
+
+encrypt-qa:
+	@make encrypt-secret env=qa
+
+encrypt-live:
+	@make encrypt-secret env=live
