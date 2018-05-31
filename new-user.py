@@ -16,7 +16,7 @@ password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in 
 print('user=' + args.user + ' password=' + password + '\n')
 
 print(
-        '  - {"user": "' + args.user + '", ' +
-        '"sha512": "' + passlib.hash.sha512_crypt.using(rounds=5000).hash(password) + '", ' +
-        '"sha1": "' + base64.b64encode(sha.new(password).digest()) + '"}\n'
+        '- { user: "' + args.user + '", ' +
+        'sha512: "' + passlib.hash.sha512_crypt.using(rounds=5000).hash(password) + '", ' +
+        'sha1: "' + base64.b64encode(sha.new(password).digest()) + '" }\n'
 )
