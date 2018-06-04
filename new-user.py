@@ -9,9 +9,13 @@ import string
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--user')
+parser.add_argument('--password')
 args = parser.parse_args()
 
-password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
+password = args.password
+
+if not password:
+    password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(16))
 
 print('user=' + args.user + ' password=' + password + '\n')
 
