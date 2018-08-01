@@ -62,6 +62,9 @@ awscli:
 create-user:
 	@make run cmd="python scripts/new-user.py --user '${name}' --password '${password}'"
 
+create-db:
+	@make run cmd="python scripts/new-db.py --name '${name}'"
+
 gen-self-signed-ssl-keys:
 	docker run --rm -it -v ${PWD}:/home -w /home svagi/openssl req -x509 -nodes -newkey rsa:2048 -keyout ssl.key -out ssl.crt
 
