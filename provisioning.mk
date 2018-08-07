@@ -41,6 +41,12 @@ ansible-qa:
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=qa,tag:role=*common*" ${args}' \
 		cmd="ansible-playbook -vv playbook.yml ${ansible_qa_args} ${cmd}"
 
+ansible-vpn:
+	@make run \
+		wd=ansible \
+		args='-e ANSIBLE_INVENTORY_FILTERS="tag:role=*vpn*" ${args}' \
+		cmd="ansible-playbook -vv playbook.yml ${ansible_qa_args} ${cmd}"
+
 ansible-live:
 	@make run \
 		wd=ansible \
