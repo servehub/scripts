@@ -100,7 +100,7 @@ encrypt-secret:
 	@echo -ne "\nEnter secret value for encryption: "
 	@read value \
 		&& echo -e "\n" \
-		&& echo -n "$$value" | openssl smime -encrypt -outform pem .secrets/marathon-secrets-${env}.cer | base64
+		&& echo -n "$$value" | openssl smime -encrypt -aes256 -outform pem .secrets/marathon-secrets-${env}.cer | base64
 	@echo ""
 
 encrypt-qa:
