@@ -100,8 +100,10 @@ encrypt-secret:
 	@echo -ne "\nEnter secret value for encryption: "
 	@read value \
 		&& echo -e "\n" \
-		&& echo -n "$$value" | openssl smime -encrypt -aes256 -outform pem .secrets/marathon-secrets-${env}.cer | base64
+		&& echo -n "$$value" > .in.enc \
+		&& docker run --rm -v ${PWD}:/home -w /home svagi/openssl smime -encrypt -aes256 -in .in.enc -outform pem .secrets/marathon-secrets-${env}.cer | base64
 	@echo ""
+	@rm .in.enc
 
 encrypt-qa:
 	@make encrypt-secret env=qa
