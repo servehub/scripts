@@ -68,6 +68,9 @@ create-db:
 gen-self-signed-ssl-keys:
 	docker run --rm -it -v ${PWD}:/home -w /home svagi/openssl req -x509 -nodes -newkey rsa:2048 -keyout ssl.key -out ssl.crt
 
+#
+# docker stop compose_journalbeat_1 && rm -f /var/data/journalbeat/journalbeat-pending-queue && docker start compose_journalbeat_1
+#
 journalbeat-restart:
 	@make run \
 		wd=ansible \
