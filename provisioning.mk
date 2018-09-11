@@ -74,6 +74,9 @@ create-db:
 gen-self-signed-ssl-keys:
 	docker run --rm -it -v ${PWD}:/home -w /home svagi/openssl req -x509 -nodes -newkey rsa:2048 -keyout ssl.key -out ssl.crt
 
+#
+# docker stop compose_journalbeat_1 && rm -f /var/data/journalbeat/journalbeat-pending-queue && docker start compose_journalbeat_1
+#
 journalbeat-restart:
 	@make run \
 		wd=ansible \
@@ -106,8 +109,10 @@ encrypt-secret:
 	@echo -ne "\nEnter secret value for encryption: "
 	@read value \
 		&& echo -e "\n" \
-		&& echo -n "$$value" | openssl smime -encrypt -outform pem .secrets/marathon-secrets-${env}.cer | base64
+		&& echo -n "$$value" > .in.enc \
+		&& docker run --rm -v ${PWD}:/home -w /home svagi/openssl smime -encrypt -aes256 -in .in.enc -outform pem .secrets/marathon-secrets-${env}.cer | base64
 	@echo ""
+	@rm .in.enc
 
 encrypt-qa:
 	@make encrypt-secret env=qa
