@@ -20,7 +20,7 @@ mesos-slave-down:
 		  { "hostname" : "${host}", "ip": "'${ip}'" } \
 		]' | http -v POST http://${mesos_host}/machine/down "Content-Type: application/json"
 
-	@make ansible-shell cmd='docker stop compose_mesos-slave_1' filter="tag:host=${host}"
+	@make ansible-shell cmd='docker stop compose_mesos-slave_1' filter="tag:Name=${host}"
 
 mesos-slave-up:
 	$(eval ip=`ping -c 1 ${host} | awk -F'[()]' '/PING/{print $$$$2}'`)
@@ -29,4 +29,4 @@ mesos-slave-up:
 		  { "hostname" : "${host}", "ip": "'${ip}'" } \
 		]' | http -v POST http://${mesos_host}/machine/up "Content-Type: application/json"
 
-	@make ansible-shell cmd='docker start compose_mesos-slave_1' filter="tag:host=${host}"
+	@make ansible-shell cmd='docker start compose_mesos-slave_1' filter="tag:Name=${host}"
