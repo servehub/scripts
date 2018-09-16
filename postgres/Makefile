@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 
 user ?= ubuntu
-postgres_image ?= postgres:10.2
+postgres_image ?= servehub/stolon
 postgres_host ?= localhost
 docker_image ?= docker.example.com/tests/postgres-snapshot:latest
 
@@ -31,7 +31,7 @@ build-and-push:
 
 	echo 'FROM ${postgres_image}' > Dockerfile
 	echo '' >> Dockerfile
-	echo 'COPY ./data /var/lib/postgresql/data' >> Dockerfile
+	echo 'COPY --chown=postgres ./data /var/lib/postgresql/data' >> Dockerfile
 
 	docker build -t ${docker_image} .
 	docker push ${docker_image}
