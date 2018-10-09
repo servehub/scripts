@@ -6,6 +6,7 @@ aws_region ?= 'eu-west-1'
 tty_enabled ?= -ti
 
 ansible_qa_args ?=
+ansible_stage_args ?=
 ansible_live_args ?=
 
 run:
@@ -13,7 +14,7 @@ run:
 	@echo ${cmd}
 	@echo -e "\033[0m"
 
-	docker run --rm ${tty_enabled} \
+	@docker run --rm ${tty_enabled} \
 		-v ${PWD}:/src \
 		-w /src/${wd} \
 		-e AWS_ACCESS_KEY_ID=$$${project_name_upper}_AWS_ACCESS_KEY_ID \
@@ -40,6 +41,12 @@ ansible-qa:
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=qa,tag:role=*common*" ${args}' \
 		cmd="ansible-playbook -vv playbook.yml ${ansible_qa_args} ${cmd}"
+
+ansible-stage:
+	@make run \
+		wd=ansible \
+		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=stage,tag:role=*common*" ${args}' \
+		cmd="ansible-playbook -vv playbook.yml ${ansible_stage_args} ${cmd}"
 
 ansible-vpn:
 	@make run \
