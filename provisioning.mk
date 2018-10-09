@@ -109,7 +109,7 @@ generate-secrets:
 
 prepare-new-server:
 	ssh ${ssh} 'echo ${host} | sudo tee /etc/hostname'
-	ssh ${ssh} 'sudo hostname $(cat /etc/hostname)'
+	ssh ${ssh} 'sudo hostname `cat /etc/hostname`'
 	ssh ${ssh} 'sudo apt-get update && sudo apt-get -y install --fix-missing python-simplejson'
 
 encrypt-secret:
