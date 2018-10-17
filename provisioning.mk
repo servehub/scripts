@@ -106,6 +106,7 @@ generate-secrets:
 	ssh-keygen -f ${PWD}/.secrets/ssh_rsa_key
 	ssh-keygen -f ${PWD}/.secrets/vault-password
 	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-qa.key -out ${PWD}/.secrets/marathon-secrets-qa.cer -subj "/CN=PKCS#7"
+	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-stage.key -out ${PWD}/.secrets/marathon-secrets-stage.cer -subj "/CN=PKCS#7"
 	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-live.key -out ${PWD}/.secrets/marathon-secrets-live.cer -subj "/CN=PKCS#7"
 
 prepare-new-server:
@@ -124,6 +125,9 @@ encrypt-secret:
 
 encrypt-qa:
 	@make encrypt-secret env=qa
+
+encrypt-stage:
+	@make encrypt-secret env=stage
 
 encrypt-live:
 	@make encrypt-secret env=live
