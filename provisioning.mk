@@ -4,6 +4,7 @@ project_name ?= project
 project_name_upper ?= $(shell echo "${project_name}" | tr a-z A-Z)
 aws_region ?= 'eu-west-1'
 tty_enabled ?= -ti
+le_email ?= example@example.com
 
 ansible_qa_args ?=
 ansible_stage_args ?=
@@ -126,3 +127,50 @@ encrypt-qa:
 
 encrypt-live:
 	@make encrypt-secret env=live
+
+#
+# make le-certs domain='*.yandex.ru' hzid=Z1GYPKQAXXYYZZZ
+#
+le-certs:
+	@make le-validate hzid=${hzid} &
+
+	sleep 5
+
+	docker run -it --rm \
+		-v ${PWD}/.secrets/le/etc:/etc/letsencrypt \
+		-v ${PWD}/.secrets/le/lib:/var/lib/letsencrypt \
+		certbot/certbot certonly --manual \
+		--preferred-challenges dns-01 \
+		--server https://acme-v02.api.letsencrypt.org/directory \
+		--agree-tos \
+		--renew-by-default \
+		--manual-auth-hook /etc/letsencrypt/authenticator.sh \
+		--manual-public-ip-logging-ok \
+		--email "${le_email}" \
+		-d '${domain}' \
+
+le-validate:
+	rm -f ${PWD}/.secrets/le/etc/cert-{validation,domain}.txt
+
+	while [ ! -f ${PWD}/.secrets/le/etc/cert-validation.txt ]; do sleep 2; done
+
+	$(eval cert_validation=`cat ${PWD}/.secrets/le/etc/cert-validation.txt`)
+	$(eval cert_domain=`cat ${PWD}/.secrets/le/etc/cert-domain.txt`)
+
+	echo '{ \
+	  "Changes": [{ \
+	    "Action": "UPSERT", \
+	    "ResourceRecordSet": { \
+	      "Type": "TXT", \
+	      "Name": "_acme-challenge.'${cert_domain}'", \
+	      "TTL": 0, \
+	      "ResourceRecords": [{"Value": "\"'${cert_validation}'\""}] \
+	    } \
+	  }] \
+	}' > le-aws-validation.json
+
+	cat le-aws-validation.json
+
+	make awscli cmd="route53 change-resource-record-sets --hosted-zone-id=${hzid} --change-batch=file:///src/le-aws-validation.json" tty_enabled=''
+
+	rm -f le-aws-validation.json
