@@ -16,7 +16,7 @@ clear-and-run:
 	-docker stop postgres_stapshot
 	-docker stop postgres
 
-	docker run --rm --name postgres_stapshot -p 5432:5432 -v ${PWD}/data:/var/lib/postgresql/data ${postgres_image}
+	docker run --rm --name postgres_stapshot -p 5432:5432 -v ${PWD}/data:/var/lib/postgresql/data -v postgresql.conf:/etc/postgresql.conf ${postgres_image} -c config_file=/etc/postgresql.conf
 
 update-snapshot:
 	ssh ${user}@${postgres_host} \
