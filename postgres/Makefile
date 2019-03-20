@@ -16,7 +16,7 @@ clear-and-run:
 	-docker stop postgres_stapshot
 	-docker stop postgres
 
-	docker run --rm --name postgres_stapshot -p 5432:5432 -v ${PWD}/data:/var/lib/postgresql/data -v postgresql.conf:/etc/postgresql.conf ${postgres_image} -c config_file=/etc/postgresql.conf
+	docker run --rm --name postgres_stapshot -p 5432:5432 -v ${PWD}/data:/var/lib/postgresql/data ${postgres_image} -c 'wal_level=minimal' -c 'max_wal_size=80MB' -c 'min_wal_size=40MB' -c 'max_wal_senders=0' -c 'wal_keep_segments=0'
 
 update-snapshot:
 	ssh ${user}@${postgres_host} \
