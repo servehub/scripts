@@ -24,7 +24,7 @@ mesos-slave-down:
 
 	sleep 1
 
-	@make ansible-shell cmd='docker stop compose_mesos-slave_1' filter="tag:Name=${host}.${env_domain}"
+	@make ansible-shell cmd='docker-compose -f /etc/compose/mesos-slave.yml down' filter="tag:Name=${host}.${env_domain}"
 
 	curl http://marathon.live.boople.co/v2/tasks \
 		| jq '{"ids": [.tasks[] | select(.host == "${host}.${env_domain}").id]}' \
@@ -38,4 +38,4 @@ mesos-slave-up:
 		  { "hostname" : "${host}.${env_domain}", "ip": "'${ip}'" } \
 		]' | http -v POST http://mesos.${env_domain}/machine/up "Content-Type: application/json"
 
-	@make ansible-shell cmd='docker start compose_mesos-slave_1' filter="tag:Name=${host}.${env_domain}"
+	@make ansible-shell cmd='docker-compose -f /etc/compose/mesos-slave.yml up -d --force-recreate' filter="tag:Name=${host}.${env_domain}"
