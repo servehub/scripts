@@ -103,7 +103,9 @@ use-serve-configs:
 	ln -sf ${PWD}/ansible/files/serve/include.d /etc/serve
 
 generate-secrets:
-	ssh-keygen -f ${PWD}/.secrets/ssh_rsa_key
+	ssh-keygen -f ${PWD}/.secrets/terraform_rsa
+	ssh-keygen -f ${PWD}/.secrets/copy_db_ssh_key
+	ssh-keygen -f ${PWD}/.secrets/github_ci_rsa
 	ssh-keygen -f ${PWD}/.secrets/vault-password
 	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-qa.key -out ${PWD}/.secrets/marathon-secrets-qa.cer -subj "/CN=PKCS#7"
 	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-stage.key -out ${PWD}/.secrets/marathon-secrets-stage.cer -subj "/CN=PKCS#7"
