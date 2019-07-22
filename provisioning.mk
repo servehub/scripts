@@ -116,6 +116,11 @@ prepare-new-server:
 	ssh ${ssh} 'sudo hostname `cat /etc/hostname`'
 	ssh ${ssh} 'sudo apt-get update && sudo apt-get -y install --fix-missing python-simplejson'
 
+decrypt-secret:
+	@echo ""
+	@echo -n "${value}" | base64 -D | docker run -i --rm -v ${PWD}:/home -w /home svagi/openssl smime -decrypt -aes256 -inform pem -inkey .secrets/marathon-secrets-${env}.key
+	@echo -e "\n"
+
 encrypt-secret:
 	@echo -ne "\nEnter secret value for encryption: "
 	@read value \
