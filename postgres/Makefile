@@ -20,9 +20,12 @@ clear-and-run:
 
 update-snapshot:
 	ssh ${user}@${postgres_host} \
-		'docker exec ${postgres_container} /bin/bash -c "pg_dumpall --host=127.0.0.1 --port=${postgres_port} -U postgres"' > ${PWD}/backup-all.sql
+		'docker exec ${postgres_container} /bin/bash -c "pg_dumpall --host=127.0.0.1 --port=${postgres_port} -U postgres" | gzip > /tmp/dbdump.gz'
 
-	mv ${PWD}/backup-all.sql ${PWD}/data/backup-all.sql
+	scp ${user}@${postgres_host}:/tmp/dbdump.gz ./dump.gz
+
+	gunzip dump.gz
+	mv ${PWD}/dump ${PWD}/data/backup-all.sql
 	docker exec -ti postgres_stapshot bash -c 'psql -U postgres < /var/lib/postgresql/data/backup-all.sql'
 
 build-and-push:
