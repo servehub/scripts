@@ -107,9 +107,10 @@ generate-secrets:
 	ssh-keygen -f ${PWD}/.secrets/copy_db_ssh_key
 	ssh-keygen -f ${PWD}/.secrets/github_ci_rsa
 	ssh-keygen -f ${PWD}/.secrets/vault-password
-	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-qa.key -out ${PWD}/.secrets/marathon-secrets-qa.cer -subj "/CN=PKCS#7"
-	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-stage.key -out ${PWD}/.secrets/marathon-secrets-stage.cer -subj "/CN=PKCS#7"
-	openssl req -x509 -nodes -newkey rsa:4096 -keyout ${PWD}/.secrets/marathon-secrets-live.key -out ${PWD}/.secrets/marathon-secrets-live.cer -subj "/CN=PKCS#7"
+
+	for env in qa stage live; do \
+		openssl genpkey -aes-256-cbc -algorithm RSA -out ${PWD}/.secrets/secrets-$$env-private.key -pkeyopt rsa_keygen_bits:4096 && openssl rsa -in ${PWD}/.secrets/secrets-$$env-private.key -pubout -out ${PWD}/keys/secrets-$$env-public.key; \
+	done \
 
 prepare-new-server:
 	ssh ${ssh} 'echo ${host} | sudo tee /etc/hostname'
@@ -126,7 +127,9 @@ encrypt-secret:
 	@read value \
 		&& echo -e "\n" \
 		&& echo -n "$$value" > .in.enc \
-		&& docker run --rm -v ${PWD}:/home -w /home svagi/openssl smime -encrypt -aes256 -in .in.enc -outform pem .secrets/marathon-secrets-${env}.cer | base64
+		&& docker run --rm -v ${PWD}:/home -w /home svagi/openssl rsautl -encrypt -in .in.enc -inkey keys/secrets-${env}-public.key -pubin | base64 | pbcopy \
+		&& pbpaste
+
 	@echo ""
 	@rm .in.enc
 
