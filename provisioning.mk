@@ -21,6 +21,8 @@ run:
 		-e AWS_ACCESS_KEY_ID=$$${project_name_upper}_AWS_ACCESS_KEY_ID \
 		-e AWS_SECRET_ACCESS_KEY=$$${project_name_upper}_AWS_SECRET_ACCESS_KEY \
 		-e AWS_DEFAULT_REGION=${aws_region} \
+		-v /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock \
+		-e SSH_AUTH_SOCK=/run/host-services/ssh-auth.sock \
 		${args} \
 		servehub/provisioning-tools:latest \
 			/bin/bash -c "${cmd}" \
