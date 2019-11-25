@@ -15,12 +15,14 @@ args = parser.parse_args()
 
 password = args.password
 
+otp = TOTP.new().base32_key
+
 if not password:
     password = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(18))
 
-otpSecret = subprocess.check_output(['ansible-vault', 'encrypt_string', '--vault-id', '.secrets/vault-password', TOTP.new().base32_key, '--name', 'otpSecret'])
+otpSecret = subprocess.check_output(['ansible-vault', 'encrypt_string', '--vault-id', '.secrets/vault-password', otp, '--name', 'otpSecret'])
 
-print('user=' + args.user + ' password=' + password + '\n')
+print('user=' + args.user + ' password=' + password + ' otp=' + otp + '\n')
 
 print(
     '- user: "' + args.user + '"\n' +
