@@ -5,7 +5,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu xenial main" | tee
     && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 7BB9C367 \
     && DEBIAN_FRONTEND=noninteractive apt-get update \
     && apt-get install -y \
-         ansible=2.8.* \
+         ansible=2.9.* \
          python-pip \
          sshpass \
          openssh-client \
@@ -19,7 +19,7 @@ RUN wget -q https://github.com/aktau/github-release/releases/download/v0.7.2/lin
     && tar -jxf linux-amd64-github-release.tar.bz2 -C /usr/local/bin --strip=3 bin/linux/amd64/github-release \
     && rm linux-amd64-github-release.tar.bz2
 
-ENV TERRAFORM_VERSION 0.12.6
+ENV TERRAFORM_VERSION 0.12.16
 
 RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
     && unzip -oq terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin \

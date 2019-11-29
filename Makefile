@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-version ?= 1.4.2
+version ?= 1.4.3
 
 build-provisioning-tools:
 	docker build -t servehub/provisioning-tools:${version} -t servehub/provisioning-tools:latest .
