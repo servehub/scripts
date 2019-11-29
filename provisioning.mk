@@ -109,7 +109,10 @@ generate-secrets:
 	ssh-keygen -f ${PWD}/.secrets/vault-password
 
 	for env in qa stage live; do \
-		openssl genpkey -aes-256-cbc -algorithm RSA -out ${PWD}/.secrets/secrets-$$env-private.key -pkeyopt rsa_keygen_bits:4096 && openssl rsa -in ${PWD}/.secrets/secrets-$$env-private.key -pubout -out ${PWD}/keys/secrets-$$env-public.key; \
+		echo "Generate $$env key: "; \
+		openssl genpkey -aes-256-cbc -algorithm RSA -out ${PWD}/.secrets/secrets-$$env-private.key -pkeyopt rsa_keygen_bits:4096 \
+			&& openssl rsa -in ${PWD}/.secrets/secrets-$$env-private.key -pubout -out ${PWD}/.secrets/secrets-$$env-public.key; \
+		echo ""; \
 	done \
 
 prepare-new-server:
