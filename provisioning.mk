@@ -124,7 +124,9 @@ prepare-new-server:
 
 decrypt-secret:
 	@echo ""
-	@echo -n "${value}" | base64 -D | docker run -i --rm -v ${PWD}:/home -w /home svagi/openssl smime -decrypt -aes256 -inform pem -inkey .secrets/marathon-secrets-${env}.key
+	@echo -n "$$value" | base64 -D > .in.enc
+	@docker run -ti --rm -v ${PWD}:/home -w /home svagi/openssl rsautl -decrypt -in .in.enc -inkey .secrets/secrets-${env}-private.key
+	@rm .in.enc
 	@echo -e "\n"
 
 encrypt-secret:
