@@ -125,19 +125,19 @@ prepare-new-server:
 decrypt-secret:
 	@echo ""
 	@echo -n "$$value" | base64 -D > .in.enc
-	@docker run -ti --rm -v ${PWD}:/home -w /home svagi/openssl rsautl -decrypt -in .in.enc -inkey .secrets/secrets-${env}-private.key
-	@rm .in.enc
+	-@docker run -ti --rm -v ${PWD}:/home -w /home svagi/openssl rsautl -decrypt -in .in.enc -inkey .secrets/secrets-${env}-private.key
 	@echo -e "\n"
+	@rm .in.enc
 
 encrypt-secret:
 	@echo -ne "\nEnter secret value for encryption: "
-	@read value \
+	-@read value \
 		&& echo -e "\n" \
 		&& echo -n "$$value" > .in.enc \
 		&& docker run --rm -v ${PWD}:/home -w /home svagi/openssl rsautl -encrypt -in .in.enc -inkey keys/secrets-${env}-public.key -pubin | base64 | pbcopy \
 		&& pbpaste
 
-	@echo ""
+	@echo -e "\n"
 	@rm .in.enc
 
 encrypt-qa:
