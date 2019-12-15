@@ -151,10 +151,6 @@ encrypt-live:
 # make le-certs domain='*.yandex.ru' hzid=Z1GYPKQAXXYYZZZ
 #
 le-certs:
-	@make le-validate hzid=${hzid} &
-
-	sleep 5
-
 	docker run -it --rm \
 		-v ${PWD}/.secrets/le/etc:/etc/letsencrypt \
 		-v ${PWD}/.secrets/le/lib:/var/lib/letsencrypt \
@@ -163,27 +159,20 @@ le-certs:
 		--server https://acme-v02.api.letsencrypt.org/directory \
 		--agree-tos \
 		--renew-by-default \
-		--manual-auth-hook /etc/letsencrypt/authenticator.sh \
+		--manual \
 		--manual-public-ip-logging-ok \
 		--email "${le_email}" \
 		-d '${domain}' \
 
 le-validate:
-	rm -f ${PWD}/.secrets/le/etc/cert-{validation,domain}.txt
-
-	while [ ! -f ${PWD}/.secrets/le/etc/cert-validation.txt ]; do sleep 2; done
-
-	$(eval cert_validation=`cat ${PWD}/.secrets/le/etc/cert-validation.txt`)
-	$(eval cert_domain=`cat ${PWD}/.secrets/le/etc/cert-domain.txt`)
-
 	echo '{ \
 	  "Changes": [{ \
 	    "Action": "UPSERT", \
 	    "ResourceRecordSet": { \
 	      "Type": "TXT", \
-	      "Name": "_acme-challenge.'${cert_domain}'", \
+	      "Name": "_acme-challenge.'${domain}'", \
 	      "TTL": 0, \
-	      "ResourceRecords": [{"Value": "\"'${cert_validation}'\""}] \
+	      "ResourceRecords": [{"Value": "\"'${validation}'\""}] \
 	    } \
 	  }] \
 	}' > le-aws-validation.json
