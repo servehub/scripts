@@ -19,7 +19,7 @@ RUN wget -q https://github.com/aktau/github-release/releases/download/v0.7.2/lin
     && tar -jxf linux-amd64-github-release.tar.bz2 -C /usr/local/bin --strip=3 bin/linux/amd64/github-release \
     && rm linux-amd64-github-release.tar.bz2
 
-ENV TERRAFORM_VERSION 0.12.16
+ENV TERRAFORM_VERSION 0.12.20
 
 RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
     && unzip -oq terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin \
