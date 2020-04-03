@@ -43,25 +43,25 @@ ansible-qa:
 	@make run \
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=qa,tag:role=*common*" ${args}' \
-		cmd="echo ansible-playbook -vv $(if $(play), "playbook/${play}.yml", "playbook.yml") ${ansible_qa_args} ${cmd}"
+		cmd="ansible-playbook -vv $(if $(play), "${play}.yml", "playbook.yml") ${ansible_qa_args} ${cmd}"
 
 ansible-stage:
 	@make run \
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=stage,tag:role=*common*" ${args}' \
-		cmd="ansible-playbook -vv $(if $(play), "playbook/${play}.yml", "playbook.yml") ${ansible_stage_args} ${cmd}"
+		cmd="ansible-playbook -vv $(if $(play), "${play}.yml", "playbook.yml") ${ansible_stage_args} ${cmd}"
+
+ansible-live:
+	@make run \
+		wd=ansible \
+		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=live,tag:role=*common*" ${args}' \
+		cmd="ansible-playbook -vv $(if $(play), "${play}.yml", "playbook.yml") ${ansible_live_args} ${cmd}"
 
 ansible-vpn:
 	@make run \
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:role=*vpn*" ${args}' \
 		cmd="ansible-playbook -vv playbook.yml ${ansible_qa_args} ${cmd}"
-
-ansible-live:
-	@make run \
-		wd=ansible \
-		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=live,tag:role=*common*" ${args}' \
-		cmd="ansible-playbook -vv $(if $(play), "playbook/${play}.yml", "playbook.yml") ${ansible_live_args} ${cmd}"
 
 ansible-encrypt:
 	@make run cmd="ansible-vault encrypt_string --vault-id .secrets/vault-password '${value}' --name='${name}'"
