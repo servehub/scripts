@@ -36,6 +36,15 @@ terraform-plan:
 terraform-apply:
 	@make run wd=terraform cmd="terraform apply"
 
+terraform2-init:
+	@make run wd=terraform2 cmd="terraform init"
+
+terraform2-plan:
+	@make run wd=terraform2 cmd="terraform plan"
+
+terraform2-apply:
+	@make run wd=terraform2 cmd="terraform apply"
+
 tag-spot-instances:
 	@make run cmd="python scripts/tag-spots.py --region ${aws_region}"
 
