@@ -21,7 +21,7 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu xenial main" | tee
          libssl-dev \
          wget
 
-RUN pip install boto passlib awscli bcrypt --upgrade --user
+RUN pip install boto passlib awscli bcrypt==3.1.7 --upgrade --user
 
 RUN wget -q https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 \
     && tar -jxf linux-amd64-github-release.tar.bz2 -C /usr/local/bin --strip=3 bin/linux/amd64/github-release \
