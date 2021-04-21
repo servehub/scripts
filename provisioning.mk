@@ -8,6 +8,7 @@ le_email ?= example@example.com
 
 ansible_qa_args ?=
 ansible_stage_args ?=
+ansible_testnet_args ?=
 ansible_live_args ?=
 
 run:
@@ -59,6 +60,12 @@ ansible-stage:
 		wd=ansible \
 		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=stage,tag:role=*common*,${filter}" ${args}' \
 		cmd="ansible-playbook -vv $(if $(play), "${play}.yml", "playbook.yml") ${ansible_stage_args} ${cmd}"
+
+ansible-testnet:
+	@make run \
+		wd=ansible \
+		args='-e ANSIBLE_INVENTORY_FILTERS="tag:env=testnet,tag:role=*common*,${filter}" ${args}' \
+		cmd="ansible-playbook -vv $(if $(play), "${play}.yml", "playbook.yml") ${ansible_testnet_args} ${cmd}"
 
 ansible-live:
 	@make run \
@@ -119,7 +126,7 @@ generate-secrets:
 	ssh-keygen -f ${PWD}/.secrets/github_ci_rsa
 	ssh-keygen -f ${PWD}/.secrets/vault-password
 
-	for env in qa stage live; do \
+	for env in qa stage testnet live; do \
 		echo "Generate $$env key: "; \
 		openssl genpkey -aes-256-cbc -algorithm RSA -out ${PWD}/.secrets/secrets-$$env-private.key -pkeyopt rsa_keygen_bits:4096 \
 			&& openssl rsa -in ${PWD}/.secrets/secrets-$$env-private.key -pubout -out ${PWD}/.secrets/secrets-$$env-public.key; \
@@ -154,6 +161,9 @@ encrypt-qa:
 
 encrypt-stage:
 	@make encrypt-secret env=stage
+
+encrypt-testnet:
+	@make encrypt-secret env=testnet
 
 encrypt-live:
 	@make encrypt-secret env=live
