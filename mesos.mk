@@ -24,11 +24,13 @@ mesos-slave-down:
 
 	sleep 1
 
-	@make ansible-shell cmd='docker-compose -f /etc/compose/mesos-slave.yml down' filter="tag:Name=${host}.${env_domain}"
-
 	curl http://marathon.live.boople.co/v2/tasks \
 		| jq '{"ids": [.tasks[] | select(.host == "${host}.${env_domain}").id]}' \
 		| http -v POST http://marathon.${env_domain}/v2/tasks/delete
+
+	sleep 5
+
+	@make ansible-shell cmd='docker-compose -f /etc/compose/mesos-slave.yml down' filter="tag:Name=${host}.${env_domain}"
 
 mesos-slave-up:
 	$(eval ip=`ping -c 1 ${host}.${env_domain} | awk -F'[()]' '/PING/{print $$$$2}'`)
