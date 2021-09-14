@@ -16,7 +16,7 @@ run:
 	@echo ${cmd}
 	@echo -e "\033[0m"
 
-	@docker run --rm ${tty_enabled} \
+	@docker run -it --rm ${tty_enabled} \
 		-v ${PWD}:/src \
 		-w /src/${wd} \
 		-e AWS_ACCESS_KEY_ID=$$${project_name_upper}_AWS_ACCESS_KEY_ID \

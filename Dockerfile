@@ -19,13 +19,15 @@ RUN echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu xenial main" | tee
          unzip \
          libffi-dev \
          libssl-dev \
+         bzip2 \
          wget
 
 RUN pip install boto passlib awscli bcrypt==3.1.7 --upgrade --user
 
-RUN wget -q https://github.com/aktau/github-release/releases/download/v0.7.2/linux-amd64-github-release.tar.bz2 \
-    && tar -jxf linux-amd64-github-release.tar.bz2 -C /usr/local/bin --strip=3 bin/linux/amd64/github-release \
-    && rm linux-amd64-github-release.tar.bz2
+RUN wget -q https://github.com/github-release/github-release/releases/download/v0.10.0/linux-amd64-github-release.bz2 \
+    && bzip2 -ckd linux-amd64-github-release.bz2 > /usr/local/bin/github-release \
+    && chmod 755 /usr/local/bin/github-release \
+    && rm linux-amd64-github-release.bz2
 
 ENV TERRAFORM_VERSION 0.13.5
 
